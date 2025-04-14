@@ -43,8 +43,8 @@ function JungleBridgeSim()
     %generate a plot comparing the predicted and measured bridge shape
     figure()
     hold on
-    plot(x_list,y_list)
-    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0])
+    plot(x_list,y_list, DisplayName='Calced')
+    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0], DisplayName='Real')
     axis equal
-    legend("Calced","Real")
+    legend()
 end
