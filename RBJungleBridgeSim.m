@@ -7,7 +7,7 @@
 % param_struct.l0_list = [l0_1;...;l0_n]: list of natural lengths
 % param_struct.m_list = [m_1;...;m_(n-1)]: list of weight masses
 % param_struct.g = 9.8 m/sec^2: gravitational acceleration
-function JungleBridgeSim()
+function RBJungleBridgeSim()
     r1 = [8.1, 8.4, 8.6, 8.9];
     r2 = [9.6, 10.2, 11, 12];
     r3 = [9.1, 9.3, 9.4, 9.6];
@@ -43,8 +43,11 @@ function JungleBridgeSim()
     %generate a plot comparing the predicted and measured bridge shape
     figure()
     hold on
-    plot(x_list,y_list, DisplayName='Calced')
-    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0], DisplayName='Real')
+    plot(x_list,y_list, DisplayName='Predicted', LineWidth=1, LineStyle='--')
+    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0], DisplayName='Measured', LineWidth=1)
+    title("Comparison Between the Measured and the Predicted Rubber Band Bridges")
+    xlabel("Position (cm)")
+    ylabel("Position (cm)")
     axis equal
     legend()
 end
