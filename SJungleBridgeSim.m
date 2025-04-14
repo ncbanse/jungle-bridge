@@ -3,51 +3,38 @@
 % param_struct.r0 = [x_0;y_0]: coordinates of leftmost vertex
 % param_struct.rn = [x_n;y_n]: coordinates of rightmost vertex
 % param_struct.num_links: number of rubber bands in bridge
-% param_struct.k_list = [k_1;...;k_n]: list of stiffnesses
 % param_struct.l0_list = [l0_1;...;l0_n]: list of natural lengths
 % param_struct.m_list = [m_1;...;m_(n-1)]: list of weight masses
 % param_struct.g = 9.8 m/sec^2: gravitational acceleration
 function SJungleBridgeSim()
-    r1 = [8.1, 8.4, 8.6, 8.9];
-    r2 = [9.6, 10.2, 11, 12];
-    r3 = [9.1, 9.3, 9.4, 9.6];
-    r4 = [2.3, 2.5, 2.6, 2.7];
-    r5 = [3.4, 3.7, 3.9, 4.4];
-    
-    m = [.026, .026, .025, .025];
-    w = cumsum(m);
-    
-    f = [r1; r2; r3; r4; r5];
-    
-    Y = w' .* 9.8;
-    k = zeros(5, 1);
-    l0 = zeros(5, 1);
-    for i = 1:5
-        A = [f(i, :)', ones(4,1)];
-        mb = (A'*A)\A'*Y;
-        k(i) = mb(1);
-        l0(i) = -mb(2)/mb(1);
+    actual_x = cumsum([0,10.5,15.25,13,24.6,15.6]);
+    actual_y = -[0,15.933,27.833,30.133,17.783,0];
+    l0 = zeros(1, 5);
+    for i = 1:length(l0)
+        l0(i) = sqrt((actual_x(i + 1) - actual_x(i))^2 + (actual_y(i + 1) - actual_y(i))^2);
     end
-    
+    m = [.025, .025, .026, .026];
     param_struct = struct();
     param_struct.r0 = [0; 0];
-    param_struct.rn = [29.8; 0];
+    param_struct.rn = [actual_x(end); 0];
     param_struct.num_links = 5;
-    param_struct.k_list = k; %stiffnesses (N/cm)
     param_struct.l0_list = l0; %natural lengths (cm)
     param_struct.m_list = m; %mass list (kg)
     param_struct.g = -9.8; %gravitational acceleration (m/s^2)
     
-    %compute the predicted bridge shape
-    [x_list,y_list] = generate_shape_prediction(param_struct);
+    %compute the predicted bridge shape using constrained optimization
+    [x_list_constrained,y_list_constrained] = generate_shape_prediction_fmincon(param_struct);
+    %compute the predicted bridge shape using unconstrained optimization
+    [x_list_unconstrained,y_list_unconstrained] = generate_shape_prediction_GD(param_struct);
     %generate a plot comparing the predicted and measured bridge shape
-    figure()
+    figure(1); clf(1);
     hold on
-    plot(x_list,y_list, DisplayName='Predicted', LineWidth=1, LineStyle='--')
-    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0], DisplayName='Measured', LineWidth=1)
-    title("Comparison Between the Measured and the Predicted String Bridges")
-    xlabel("Position (cm)")
-    ylabel("Position (cm)")
+    plot(x_list_constrained,y_list_constrained, DisplayName='Constrained Prediction', LineWidth=1, LineStyle='--')
+    plot(x_list_unconstrained,y_list_unconstrained, DisplayName='Unconstrained Prediction', LineWidth=1, LineStyle='--')
+    plot(actual_x, actual_y, DisplayName='Measured', LineWidth=1)
+    title("Comparison Between Measured and Predicted String Bridges")
+    xlabel("Horizontal Position (cm)")
+    ylabel("Vertical Position (cm)")
     axis equal
     legend()
 end

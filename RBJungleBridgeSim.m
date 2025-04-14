@@ -8,6 +8,8 @@
 % param_struct.m_list = [m_1;...;m_(n-1)]: list of weight masses
 % param_struct.g = 9.8 m/sec^2: gravitational acceleration
 function RBJungleBridgeSim()
+    actual_x = cumsum([0,6.65,10.1,8.25,2.4,2.4]);
+    actual_y = -[0,5.1,7.2,4.2,2.8,0];
     r1 = [8.1, 8.4, 8.6, 8.9];
     r2 = [9.6, 10.2, 11, 12];
     r3 = [9.1, 9.3, 9.4, 9.6];
@@ -41,13 +43,13 @@ function RBJungleBridgeSim()
     %compute the predicted bridge shape
     [x_list,y_list] = generate_shape_prediction(param_struct);
     %generate a plot comparing the predicted and measured bridge shape
-    figure()
+    figure(1); clf(1);
     hold on
     plot(x_list,y_list, DisplayName='Predicted', LineWidth=1, LineStyle='--')
-    plot(cumsum([0,6.65,10.1,8.25,2.4,2.4]),-[0,5.1,7.2,4.2,2.8,0], DisplayName='Measured', LineWidth=1)
-    title("Comparison Between the Measured and the Predicted Rubber Band Bridges")
-    xlabel("Position (cm)")
-    ylabel("Position (cm)")
+    plot(actual_x, actual_y, DisplayName='Measured', LineWidth=1)
+    title("Comparison Between Measured and Predicted Rubber Band Bridges")
+    xlabel("Horizontal Position (cm)")
+    ylabel("Vertical Position (cm)")
     axis equal
     legend()
 end

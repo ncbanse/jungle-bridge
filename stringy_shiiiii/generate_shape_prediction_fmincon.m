@@ -14,9 +14,11 @@ function [x_list,y_list] = generate_shape_prediction_fmincon(param_struct)
     %generate an initial guess for the coordinate locations
     %coords_guess = [x_1;y_1;...;x_(n-1);y_(n-1)]
     x0 = param_struct.r0(1);
+    y0 = param_struct.r0(2);
     xn = param_struct.rn(1);
+    yn = param_struct.rn(2);
     x_guess = linspace(x0,xn,param_struct.num_links+1);
-    y_guess = zeros(1, param_struct.num_links+1);
+    y_guess = linspace(y0,yn,param_struct.num_links+1);
     coords_i_guess = zeros(2*(param_struct.num_links-1),1);
     for n = 1:(param_struct.num_links-1)
         coords_i_guess(2*n-1,1) = x_guess(n+1);
@@ -35,10 +37,6 @@ function [x_list,y_list] = generate_shape_prediction_fmincon(param_struct)
     %unpack result and combine with r0 and rn from param_struct
     %to generate list of positions, x_list and y_list
     V_list = [param_struct.r0;coords_sol;param_struct.rn];
-    x_list = zeros(length(V_list/2), 1);
-    y_list = zeros(length(V_list/2), 1);
-    for i = 1:length(V_list/2)
-        x_list(i) = V_list(2 * i - 1);
-        y_list(i) = V_list(2 * i);
-    end
+    x_list = V_list(1:2:(end-1));
+    y_list = V_list(2:2:end);
 end
