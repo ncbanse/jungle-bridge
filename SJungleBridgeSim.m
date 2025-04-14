@@ -25,12 +25,12 @@ function SJungleBridgeSim()
     %compute the predicted bridge shape using constrained optimization
     [x_list_constrained,y_list_constrained] = generate_shape_prediction_fmincon(param_struct);
     %compute the predicted bridge shape using unconstrained optimization
-    [x_list_unconstrained,y_list_unconstrained] = generate_shape_prediction_GD(param_struct);
+    %[x_list_unconstrained,y_list_unconstrained] = generate_shape_prediction_GD(param_struct);
     %generate a plot comparing the predicted and measured bridge shape
     figure(1); clf(1);
     hold on
-    plot(x_list_constrained,y_list_constrained, DisplayName='Constrained Prediction', LineWidth=1, LineStyle='--')
-    plot(x_list_unconstrained,y_list_unconstrained, DisplayName='Unconstrained Prediction', LineWidth=1, LineStyle='--')
+    plot(x_list_constrained,y_list_constrained, DisplayName='Prediction', LineWidth=1, LineStyle='--')
+    %plot(x_list_unconstrained,y_list_unconstrained, DisplayName='GD Prediction', LineWidth=1, LineStyle='--')
     plot(actual_x, actual_y, DisplayName='Measured', LineWidth=1)
     title("Comparison Between Measured and Predicted String Bridges")
     xlabel("Horizontal Position (cm)")

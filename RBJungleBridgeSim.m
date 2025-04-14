@@ -43,7 +43,7 @@ function RBJungleBridgeSim()
     %compute the predicted bridge shape
     [x_list,y_list] = generate_shape_prediction(param_struct);
     %generate a plot comparing the predicted and measured bridge shape
-    figure(1); clf(1);
+    figure(6); clf(6);
     hold on
     plot(x_list,y_list, DisplayName='Predicted', LineWidth=1, LineStyle='--')
     plot(actual_x, actual_y, DisplayName='Measured', LineWidth=1)
