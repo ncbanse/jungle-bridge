@@ -20,12 +20,15 @@ function [x_list,y_list] = generate_shape_prediction_GD(param_struct)
     %initialize the string stiffnesses vector to some value
     %remember, param_struct.k_list = [k_1;...;k_n]
     param_struct.k_list = ones(param_struct.num_links, 1);
-    %generate an initial guess for the coordinate locations
-    %coords_guess = [x_1;y_1;...;x_(n-1);y_(n-1)]
-    coords_guess = zeros(2*(param_struct.num_links-1),1);
+
+    x0 = param_struct.r0(1);
+    xn = param_struct.rn(1);
+    x_guess = linspace(x0,xn,param_struct.num_links+1);
+    y_guess = zeros(1, param_struct.num_links+1);
+    coords_i_guess = zeros(2*(param_struct.num_links-1),1);
     for n = 1:(param_struct.num_links-1)
-        coords_guess(2*n-1,1) = x_guess(n+1);
-        coords_guess(2*n,1) = y_guess(n+1);
+        coords_i_guess(2*n-1,1) = x_guess(n+1);
+        coords_i_guess(2*n,1) = y_guess(n+1);
     end
     
     %run gradient descent mutliple times while increasing
@@ -39,12 +42,12 @@ function [x_list,y_list] = generate_shape_prediction_GD(param_struct)
         f_cost = @(V_in) total_potential_func(V_in,param_struct);
         %use gradient descent function to compute
         %the predicted vertex locations (for the current iteration)
-        coords_guess = run_gradient_descent(f_cost, coords_guess, opt_params)
+        coords_i_guess = run_gradient_descent(f_cost, coords_i_guess, opt_params)
         %increase the stiffnesses by a factor of 10
         param_struct.k_list = param_struct.k_list*10;
     end
     %the solution is coordinates values at the last iteration
-    coords_sol = coords_guess;
+    coords_sol = coords_i_guess;
     %unpack result and combine with r0 and rn from param_struct
     %to generate list of positions, x_list and y_list
     V_list = [param_struct.r0;coords_sol;param_struct.rn];
